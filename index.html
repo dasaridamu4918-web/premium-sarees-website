@@ -1531,31 +1531,21 @@
 
 <script>
   // ============ PRODUCT DATA ============
-  const products = [
-    { id: 1, name: "Banarasi Royal Silk Saree", fabric: "Pure Banarasi Silk", price: 4500, mrp: 5800, category: "silk", colors: ["#5A1620", "#D4B880", "#0F6B48"], badge: "Best Seller", img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=80&auto=format&fit=crop" },
-    { id: 2, name: "Kanjivaram Temple Border", fabric: "Pure Kanjivaram Silk", price: 5800, mrp: 7200, category: "silk", colors: ["#5A1620", "#D4B880", "#3C2030"], badge: "Premium", img: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=600&q=80&auto=format&fit=crop" },
-    { id: 3, name: "Chanderi Cotton Zari", fabric: "Chanderi Cotton Silk", price: 2200, mrp: 2800, category: "cotton", colors: ["#F6EFE8", "#D4B880", "#0F6B48"], badge: "", img: "https://images.unsplash.com/photo-1617059062936-6f7b4f1f53a0?w=600&q=80&auto=format&fit=crop" },
-    { id: 4, name: "Patola Double Ikat Silk", fabric: "Pure Patola Silk", price: 6200, mrp: 7800, category: "silk", colors: ["#3C2030", "#D4B880", "#5A1620"], badge: "New", img: "https://images.unsplash.com/photo-1594007654728-4c34a5b5a0b6?w=600&q=80&auto=format&fit=crop" },
-    { id: 5, name: "Jamdani Bengal Weave", fabric: "Handloom Cotton", price: 2800, mrp: 3500, category: "cotton", colors: ["#F6EFE8", "#5A1620", "#0F6B48"], badge: "", img: "https://images.unsplash.com/photo-1603246618156-58a0c22f9c9c?w=600&q=80&auto=format&fit=crop" },
-    { id: 6, name: "Bandhani Festive Drape", fabric: "Georgette Bandhani", price: 3400, mrp: 4200, category: "festive", colors: ["#D4B880", "#5A1620", "#0F6B48"], badge: "Festive", img: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&q=80&auto=format&fit=crop" },
-    { id: 7, name: "Wedding Zari Heirloom", fabric: "Pure Silk with Gold Zari", price: 7800, mrp: 9500, category: "wedding", colors: ["#5A1620", "#D4B880", "#3C2030"], badge: "Best Seller", img: "https://images.unsplash.com/photo-1631352593852-91e2c83c5e9d?w=600&q=80&auto=format&fit=crop" },
-    { id: 8, name: "Designer Tussar Premium", fabric: "Tussar Silk", price: 8500, mrp: 10500, category: "premium", colors: ["#D4B880", "#111111", "#3C2030"], badge: "Premium", img: "https://images.unsplash.com/photo-1612722432474-b971cdcea3e8?w=600&q=80&auto=format&fit=crop" },
-    { id: 9, name: "Mysore Silk Classic", fabric: "Pure Mysore Silk", price: 4200, mrp: 5200, category: "silk", colors: ["#0F6B48", "#D4B880", "#5A1620"], badge: "", img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=80&auto=format&fit=crop&sat=-30" },
-    { id: 10, name: "Chikankari Cotton White", fabric: "Lucknowi Chikankari Cotton", price: 2400, mrp: 3000, category: "cotton", colors: ["#F6EFE8", "#0F6B48", "#D4B880"], badge: "New", img: "https://images.unsplash.com/photo-1617059062936-6f7b4f1f53a0?w=600&q=80&auto=format&fit=crop&sat=-20" },
-    { id: 11, name: "Bridal Lehenga Saree", fabric: "Pure Silk with Heavy Embroidery", price: 9200, mrp: 11500, category: "wedding", colors: ["#5A1620", "#D4B880"], badge: "Bridal", img: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=600&q=80&auto=format&fit=crop&sat=-20" },
-    { id: 12, name: "Modern Pastel Silk", fabric: "Art Silk", price: 3800, mrp: 4600, category: "new", colors: ["#D4B880", "#0F6B48", "#3C2030"], badge: "New Arrival", img: "https://images.unsplash.com/photo-1594007654728-4c34a5b5a0b6?w=600&q=80&auto=format&fit=crop&sat=-30" },
-
-{
-  id: 13,
-  name: "Floral Zari Saree",
-  fabric: "Silk",
-  price: 4500,
-  mrp: 5500,
-  category: "silk",
-  colors: ["#5A1620", "#D4B880"],
-  badge: "New",
-  img: "/dhs001-floral-zari.png"
-} ];
+const products = [
+  { id: 1, name: "Banarasi Royal Silk Saree", fabric: "Pure Banarasi Silk", price: 4500, mrp: 5800, category: "silk", colors: ["#5A1620", "#D4B880", "#0F6B48"], badge: "Best Seller", img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=80&auto=format&fit=crop" },
+  { id: 2, name: "Kanjivaram Temple Border", fabric: "Pure Kanjivaram Silk", price: 5800, mrp: 7200, category: "silk", colors: ["#5A1620", "#D4B880", "#3C2030"], badge: "Premium", img: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=600&q=80&auto=format&fit=crop" },
+  { id: 3, name: "Chanderi Cotton Zari", fabric: "Chanderi Cotton Silk", price: 2200, mrp: 2800, category: "cotton", colors: ["#F6EFE8", "#D4B880", "#0F6B48"], badge: "", img: "https://images.unsplash.com/photo-1617059062936-6f7b4f1f53a0?w=600&q=80&auto=format&fit=crop" },
+  { id: 4, name: "Patola Double Ikat Silk", fabric: "Pure Patola Silk", price: 6200, mrp: 7800, category: "silk", colors: ["#3C2030", "#D4B880", "#5A1620"], badge: "New", img: "https://images.unsplash.com/photo-1594007654728-4c34a5b5a0b6?w=600&q=80&auto=format&fit=crop" },
+  { id: 5, name: "Jamdani Bengal Weave", fabric: "Handloom Cotton", price: 2800, mrp: 3500, category: "cotton", colors: ["#F6EFE8", "#5A1620", "#0F6B48"], badge: "", img: "https://images.unsplash.com/photo-1603246618156-58a0c22f9c9c?w=600&q=80&auto=format&fit=crop" },
+  { id: 6, name: "Bandhani Festive Drape", fabric: "Georgette Bandhani", price: 3400, mrp: 4200, category: "festive", colors: ["#D4B880", "#5A1620", "#0F6B48"], badge: "Festive", img: "https://images.unsplash.com/photo-1595777457583-95e059d581b8?w=600&q=80&auto=format&fit=crop" },
+  { id: 7, name: "Wedding Zari Heirloom", fabric: "Pure Silk with Gold Zari", price: 7800, mrp: 9500, category: "wedding", colors: ["#5A1620", "#D4B880", "#3C2030"], badge: "Best Seller", img: "https://images.unsplash.com/photo-1631352593852-91e2c83c5e9d?w=600&q=80&auto=format&fit=crop" },
+  { id: 8, name: "Designer Tussar Premium", fabric: "Tussar Silk", price: 8500, mrp: 10500, category: "premium", colors: ["#D4B880", "#111111", "#3C2030"], badge: "Premium", img: "https://images.unsplash.com/photo-1612722432474-b971cdcea3e8?w=600&q=80&auto=format&fit=crop" },
+  { id: 9, name: "Mysore Silk Classic", fabric: "Pure Mysore Silk", price: 4200, mrp: 5200, category: "silk", colors: ["#0F6B48", "#D4B880", "#5A1620"], badge: "", img: "https://images.unsplash.com/photo-1610030469983-98e550d6193c?w=600&q=80&auto=format&fit=crop&sat=-30" },
+  { id: 10, name: "Chikankari Cotton White", fabric: "Lucknowi Chikankari Cotton", price: 2400, mrp: 3000, category: "cotton", colors: ["#F6EFE8", "#0F6B48", "#D4B880"], badge: "New", img: "https://images.unsplash.com/photo-1617059062936-6f7b4f1f53a0?w=600&q=80&auto=format&fit=crop&sat=-20" },
+  { id: 11, name: "Bridal Lehenga Saree", fabric: "Pure Silk with Heavy Embroidery", price: 9200, mrp: 11500, category: "wedding", colors: ["#5A1620", "#D4B880"], badge: "Bridal", img: "https://images.unsplash.com/photo-1583391733956-6c78276477e2?w=600&q=80&auto=format&fit=crop&sat=-20" },
+  { id: 12, name: "Modern Pastel Silk", fabric: "Art Silk", price: 3800, mrp: 4600, category: "new", colors: ["#D4B880", "#0F6B48", "#3C2030"], badge: "New Arrival", img: "https://images.unsplash.com/photo-1594007654728-4c34a5b5a0b6?w=600&q=80&auto=format&fit=crop&sat=-30" },
+  { id: 13, name: "Floral Zari Saree", fabric: "Silk", price: 4500, mrp: 5500, category: "silk", colors: ["#5A1620", "#D4B880"], badge: "New", img: "/dhs001-floral-zari.png" }
+];
 
   // ============ STATE ============
   let cart = [];
