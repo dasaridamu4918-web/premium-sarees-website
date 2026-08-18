@@ -1,0 +1,6 @@
+.env
+.env.*
+!.env.example
+local_orders.json
+node_modules/
+.vercel/

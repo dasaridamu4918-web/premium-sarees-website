@@ -1444,60 +1444,131 @@
       </button>
     </div>
     <div class="grid lg:grid-cols-5 gap-0">
-      <div class="lg:col-span-3 p-6 lg:p-8">
-        <form onsubmit="placeOrder(event)">
-          <h4 class="font-display text-lg mb-4">Shipping Details</h4>
-          <div class="grid sm:grid-cols-2 gap-3 mb-3">
-            <input type="text" required class="lux-input" placeholder="First name">
-            <input type="text" required class="lux-input" placeholder="Last name">
-          </div>
-          <input type="tel" required class="lux-input mb-3" placeholder="Phone number">
-          <input type="email" required class="lux-input mb-3" placeholder="Email address">
-          <input type="text" required class="lux-input mb-3" placeholder="Address line 1">
-          <input type="text" class="lux-input mb-3" placeholder="Address line 2 (optional)">
-          <div class="grid sm:grid-cols-3 gap-3 mb-3">
-            <input type="text" required class="lux-input" placeholder="City">
-            <input type="text" required class="lux-input" placeholder="State">
-            <input type="text" required class="lux-input" placeholder="PIN code">
-          </div>
+              <div class="lg:col-span-3 p-6 lg:p-8">
+          <form onsubmit="placeOrder(event)" id="checkoutForm">
+            <h4 class="font-display text-lg mb-4">Shipping Details</h4>
+            <div class="grid sm:grid-cols-2 gap-3 mb-3">
+              <input type="text" id="custFirstName" required class="lux-input" placeholder="First name">
+              <input type="text" id="custLastName" required class="lux-input" placeholder="Last name">
+            </div>
+            <input type="tel" id="custPhone" required class="lux-input mb-3" placeholder="Mobile number (10 digits)">
+            <input type="email" id="custEmail" required class="lux-input mb-3" placeholder="Email address">
+            <input type="text" id="custAddr1" required class="lux-input mb-3" placeholder="Full address (House no, Street, Landmark)">
+            <input type="text" id="custAddr2" class="lux-input mb-3" placeholder="Apartment, suite, unit (optional)">
+            <div class="grid sm:grid-cols-3 gap-3 mb-3">
+              <input type="text" id="custCity" required class="lux-input" placeholder="City">
+              <input type="text" id="custState" required class="lux-input" placeholder="State">
+              <input type="text" id="custPin" required class="lux-input" placeholder="PIN code">
+            </div>
 
-          <h4 class="font-display text-lg mb-4 mt-6">Payment Method</h4>
-          <div class="space-y-2 mb-6">
-            <label class="flex items-center gap-3 p-3 border border-gold/40 cursor-pointer hover:border-burgundy transition has-[:checked]:border-burgundy has-[:checked]:bg-burgundy/5">
-              <input type="radio" name="payment" checked class="accent-burgundy">
-              <i class="fa-solid fa-money-bill-wave text-emerald"></i>
-              <span class="text-sm">Cash on Delivery</span>
-            </label>
-            <label class="flex items-center gap-3 p-3 border border-gold/40 cursor-pointer hover:border-burgundy transition has-[:checked]:border-burgundy has-[:checked]:bg-burgundy/5">
-              <input type="radio" name="payment" class="accent-burgundy">
-              <i class="fa-solid fa-building-columns text-burgundy"></i>
-              <span class="text-sm">UPI / Net Banking</span>
-            </label>
-            <label class="flex items-center gap-3 p-3 border border-gold/40 cursor-pointer hover:border-burgundy transition has-[:checked]:border-burgundy has-[:checked]:bg-burgundy/5">
-              <input type="radio" name="payment" class="accent-burgundy">
-              <i class="fa-regular fa-credit-card text-ink"></i>
-              <span class="text-sm">Credit / Debit Card</span>
-            </label>
-          </div>
+            <h4 class="font-display text-lg mb-4 mt-6">Payment Method</h4>
+            <div class="space-y-2 mb-6">
+              <label class="flex items-center gap-3 p-3 border border-gold/40 cursor-pointer hover:border-burgundy transition has-[:checked]:border-burgundy has-[:checked]:bg-burgundy/5">
+                <input type="radio" name="payment" checked value="Cash on Delivery" class="accent-burgundy">
+                <i class="fa-solid fa-money-bill-wave text-emerald"></i>
+                <div>
+                  <span class="text-sm font-medium block">Cash on Delivery</span>
+                  <span class="text-[11px] text-ink/60">Pay with cash or UPI upon saree delivery</span>
+                </div>
+              </label>
+              <label class="flex items-center gap-3 p-3 border border-gold/40 cursor-pointer hover:border-burgundy transition has-[:checked]:border-burgundy has-[:checked]:bg-burgundy/5">
+                <input type="radio" name="payment" value="UPI / Online" class="accent-burgundy">
+                <i class="fa-solid fa-building-columns text-burgundy"></i>
+                <div>
+                  <span class="text-sm font-medium block">UPI / Net Banking / Card</span>
+                  <span class="text-[11px] text-ink/60">Pay via QR code / UPI after order confirmation</span>
+                </div>
+              </label>
+            </div>
 
-          <button type="submit" class="btn-primary w-full">
-            <span>Place Order</span>
-            <i class="fa-solid fa-arrow-right text-[11px]"></i>
-          </button>
-        </form>
-      </div>
-      <div class="lg:col-span-2 bg-[#f1e9df] p-6 lg:p-8">
-        <h4 class="font-display text-lg mb-4">Order Summary</h4>
-        <div id="checkoutItems" class="space-y-3 mb-5 max-h-72 overflow-y-auto"></div>
-        <div class="space-y-2 text-sm border-t border-gold/30 pt-4">
-          <div class="flex justify-between"><span class="text-ink/60">Subtotal</span><span id="checkoutSubtotal">₹0</span></div>
-          <div class="flex justify-between"><span class="text-ink/60">Delivery</span><span class="text-ink/60">Calculated next</span></div>
-          <div class="flex justify-between font-display text-lg pt-2 border-t border-gold/30 mt-2"><span>Total</span><span id="checkoutTotal" class="text-burgundy font-bold">₹0</span></div>
+            <button type="submit" id="btnPlaceOrder" class="btn-primary w-full">
+              <span>Place Order</span>
+              <i class="fa-solid fa-arrow-right text-[11px]"></i>
+            </button>
+          </form>
         </div>
-        <div class="mt-6 p-4 bg-ivory border border-gold/30">
-          <p class="text-xs text-ink/60 leading-relaxed"><i class="fa-solid fa-shield-halved text-emerald mr-1"></i> Your payment is secure. Polishing, finishing & packing included in all orders.</p>
+        <div class="lg:col-span-2 bg-[#f1e9df] p-6 lg:p-8">
+          <h4 class="font-display text-lg mb-4">Order Summary</h4>
+          <div id="checkoutItems" class="space-y-3 mb-5 max-h-72 overflow-y-auto"></div>
+          <div class="space-y-2 text-sm border-t border-gold/30 pt-4">
+            <div class="flex justify-between"><span class="text-ink/60">Subtotal</span><span id="checkoutSubtotal">₹0</span></div>
+            <div class="flex justify-between"><span class="text-ink/60">Delivery</span><span id="checkoutDelivery" class="text-emerald font-medium">FREE</span></div>
+            <div class="flex justify-between font-display text-lg pt-2 border-t border-gold/30 mt-2"><span>Total</span><span id="checkoutTotal" class="text-burgundy font-bold">₹0</span></div>
+          </div>
+          <div class="mt-6 p-4 bg-ivory border border-gold/30">
+            <p class="text-xs text-ink/60 leading-relaxed"><i class="fa-solid fa-shield-halved text-emerald mr-1"></i> Your payment is secure. Polishing, finishing & packing included in all orders.</p>
+          </div>
+        </div>
+    </div>
+  </div>
+</div>
+
+
+<!-- ============ ORDER CONFIRMATION MODAL ============ -->
+<div id="orderConfirmModal" class="modal fixed inset-0 z-[95] bg-ink/70 backdrop-blur-sm flex items-center justify-center p-3 lg:p-6 overflow-y-auto">
+  <div class="modal-content bg-ivory w-full max-w-2xl my-auto p-6 lg:p-8 rounded-sm shadow-2xl border border-gold/40">
+    <div class="text-center mb-6">
+      <div class="w-14 h-14 rounded-full bg-emerald/10 border border-emerald/40 flex items-center justify-center mx-auto mb-3 text-emerald">
+        <i class="fa-solid fa-check text-2xl"></i>
+      </div>
+      <span class="text-[11px] tracking-[0.25em] uppercase text-gold-dark font-medium">Thank You For Your Order</span>
+      <h3 class="font-display text-2xl lg:text-3xl font-medium text-ink mt-1">Order Confirmed!</h3>
+      <p class="text-xs text-ink/60 mt-1">We have received your order and will begin hand-packing your saree.</p>
+    </div>
+
+    <!-- Order Summary Card -->
+    <div class="bg-white border border-gold/30 p-5 rounded-sm mb-6 space-y-4 text-xs">
+      <div class="flex flex-wrap items-center justify-between pb-3 border-b border-gold/20 gap-2">
+        <div>
+          <span class="text-ink/50 text-[10px] uppercase tracking-wider block">Order ID</span>
+          <span id="confirmOrderId" class="font-bold text-burgundy text-sm font-display">DH20260001</span>
+        </div>
+        <div class="text-right">
+          <span class="text-ink/50 text-[10px] uppercase tracking-wider block">Order Status</span>
+          <span id="confirmOrderStatusBadge" class="bg-amber-100 text-amber-800 text-[10px] font-semibold uppercase px-2.5 py-0.5 rounded-full">Pending</span>
         </div>
       </div>
+
+      <!-- Shipping Recipient -->
+      <div class="grid sm:grid-cols-2 gap-3 text-ink/80 pb-3 border-b border-gold/20">
+        <div>
+          <span class="text-ink/50 text-[10px] uppercase tracking-wider block mb-0.5">Delivery To</span>
+          <p id="confirmCustomerName" class="font-semibold text-ink">-</p>
+          <p id="confirmCustomerPhone" class="text-ink/70">-</p>
+          <p id="confirmCustomerEmail" class="text-ink/70">-</p>
+        </div>
+        <div>
+          <span class="text-ink/50 text-[10px] uppercase tracking-wider block mb-0.5">Shipping Address</span>
+          <p id="confirmCustomerAddress" class="leading-relaxed">-</p>
+        </div>
+      </div>
+
+      <!-- Saree Items -->
+      <div>
+        <span class="text-ink/50 text-[10px] uppercase tracking-wider block mb-2">Ordered Saree Items</span>
+        <div id="confirmItemsList" class="space-y-2.5 max-h-48 overflow-y-auto"></div>
+      </div>
+
+      <!-- Calculation -->
+      <div class="pt-3 border-t border-gold/20 space-y-1 text-right">
+        <div class="flex justify-between text-ink/60"><span>Subtotal:</span><span id="confirmSubtotal">₹0</span></div>
+        <div class="flex justify-between text-ink/60"><span>Delivery Charge:</span><span id="confirmDelivery">FREE</span></div>
+        <div class="flex justify-between font-display text-base font-bold text-burgundy pt-1 border-t border-gold/20">
+          <span>Final Total:</span><span id="confirmTotal">₹0</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Actions -->
+    <div class="flex flex-col sm:flex-row gap-3">
+      <a id="confirmWhatsAppBtn" href="#" target="_blank" class="btn-outline flex-1 !text-emerald !border-emerald hover:!bg-emerald hover:!text-ivory text-center flex items-center justify-center">
+        <i class="fa-brands fa-whatsapp text-base mr-1.5"></i>
+        <span>Share via WhatsApp</span>
+      </a>
+      <button onclick="closeOrderConfirmModal()" class="btn-primary flex-1">
+        <span>Continue Shopping</span>
+        <i class="fa-solid fa-arrow-right text-[11px]"></i>
+      </button>
     </div>
   </div>
 </div>
@@ -1859,7 +1930,7 @@ const products = [
     gallery.scrollTo({ left: idx * gallery.offsetWidth, behavior: 'smooth' });
   }
 
-  // ============ CHECKOUT ============
+    // ============ CHECKOUT & ORDER MANAGEMENT ============
   function openCheckout() {
     if (cart.length === 0) {
       showToast('Your bag is empty');
@@ -1874,31 +1945,166 @@ const products = [
         </div>
         <div class="flex-1 min-w-0">
           <p class="font-display text-sm leading-snug truncate">${i.name}</p>
-          <p class="text-xs text-ink/50">Qty: ${i.qty}</p>
+          <p class="text-xs text-ink/50">Qty: ${i.qty} • ₹${(i.price * i.qty).toLocaleString('en-IN')}</p>
         </div>
-        <p class="font-display text-sm font-bold text-burgundy">₹${(i.price * i.qty).toLocaleString('en-IN')}</p>
       </div>
     `).join('');
     const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const delivery = (subtotal >= 1999 || subtotal === 0) ? 0 : 99;
+    const finalTotal = subtotal + delivery;
+
     document.getElementById('checkoutSubtotal').textContent = '₹' + subtotal.toLocaleString('en-IN');
-    document.getElementById('checkoutTotal').textContent = '₹' + subtotal.toLocaleString('en-IN');
+    document.getElementById('checkoutDelivery').textContent = delivery === 0 ? 'FREE' : '₹' + delivery.toLocaleString('en-IN');
+    document.getElementById('checkoutTotal').textContent = '₹' + finalTotal.toLocaleString('en-IN');
     document.getElementById('checkoutModal').classList.add('open');
     document.body.style.overflow = 'hidden';
   }
+
   function closeCheckout() {
     document.getElementById('checkoutModal').classList.remove('open');
     document.body.style.overflow = '';
   }
+
   document.getElementById('checkoutModal').addEventListener('click', function(e) {
     if (e.target === this) closeCheckout();
   });
-  function placeOrder(e) {
+
+  async function placeOrder(e) {
     e.preventDefault();
-    closeCheckout();
+    if (cart.length === 0) {
+      showToast('Your bag is empty', true);
+      return;
+    }
+
+    const firstName = document.getElementById('custFirstName').value.trim();
+    const lastName = document.getElementById('custLastName').value.trim();
+    const mobile = document.getElementById('custPhone').value.trim();
+    const email = document.getElementById('custEmail').value.trim();
+    const addr1 = document.getElementById('custAddr1').value.trim();
+    const addr2 = document.getElementById('custAddr2').value.trim();
+    const city = document.getElementById('custCity').value.trim();
+    const state = document.getElementById('custState').value.trim();
+    const pin = document.getElementById('custPin').value.trim();
+
+    const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const deliveryCharge = (subtotal >= 1999 || subtotal === 0) ? 0 : 99;
+    const finalTotal = subtotal + deliveryCharge;
+
+    const btn = document.getElementById('btnPlaceOrder');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin mr-2"></i> Processing Order...';
+
+    // Build Order Payload
+    const orderPayload = {
+      customer_name: `${firstName} ${lastName}`,
+      mobile_number: mobile,
+      email: email,
+      address_line1: addr1,
+      address_line2: addr2,
+      city: city,
+      state: state,
+      pincode: pin,
+      items: cart.map(item => ({
+        id: item.id,
+        name: item.name,
+        fabric: item.fabric,
+        price: item.price,
+        qty: item.qty,
+        img: item.img
+      })),
+      subtotal: subtotal,
+      delivery_charge: deliveryCharge,
+      final_total: finalTotal,
+      order_status: 'Pending',
+      payment_status: 'Payment Pending'
+    };
+
+    let createdOrder = null;
+
+    try {
+      const res = await fetch('/api/orders', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(orderPayload)
+      });
+      const data = await res.json();
+      if (res.ok && data.success) {
+        createdOrder = data.order;
+      }
+    } catch (err) {
+      console.warn('API route call fallback to local storage:', err);
+    }
+
+    // Fallback order ID generation if offline/static preview
+    if (!createdOrder) {
+      const seq = Math.floor(1000 + Math.random() * 9000);
+      createdOrder = {
+        ...orderPayload,
+        id: `DH${new Date().getFullYear()}${seq}`,
+        created_at: new Date().toISOString()
+      };
+    }
+
+    // Always synchronize with Local Storage store
+    try {
+      const STORAGE_KEY = 'dasari_orders_store';
+      const existing = localStorage.getItem(STORAGE_KEY);
+      const list = existing ? JSON.parse(existing) : [];
+      list.unshift(createdOrder);
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    } catch (err) {}
+
+    // Reset Form & Cart
+    document.getElementById('checkoutForm').reset();
     cart = [];
     updateCart();
-    showToast('Order placed successfully! We will contact you shortly.');
+    closeCheckout();
+    btn.disabled = false;
+    btn.innerHTML = '<span>Place Order</span> <i class="fa-solid fa-arrow-right text-[11px]"></i>';
+
+    // Show Confirmation Modal
+    showOrderConfirmation(createdOrder);
   }
+
+  function showOrderConfirmation(order) {
+    document.getElementById('confirmOrderId').textContent = order.id;
+    document.getElementById('confirmCustomerName').textContent = order.customer_name;
+    document.getElementById('confirmCustomerPhone').textContent = order.mobile_number;
+    document.getElementById('confirmCustomerEmail').textContent = order.email;
+    document.getElementById('confirmCustomerAddress').textContent = `${order.address_line1} ${order.address_line2 ? order.address_line2 + ', ' : ''}${order.city}, ${order.state} - ${order.pincode}`;
+
+    const itemsContainer = document.getElementById('confirmItemsList');
+    itemsContainer.innerHTML = (order.items || []).map(item => `
+      <div class="flex items-center gap-3 py-1.5 border-b border-gold/10">
+        <img src="${item.img}" class="w-10 h-12 object-cover rounded border border-gold/30">
+        <div class="flex-1 min-w-0">
+          <p class="font-display font-medium text-ink truncate">${item.name}</p>
+          <p class="text-[10px] text-ink/50">${item.fabric || 'Pure Saree'} • Qty: ${item.qty}</p>
+        </div>
+        <p class="font-semibold text-burgundy">₹${(item.price * item.qty).toLocaleString('en-IN')}</p>
+      </div>
+    `).join('');
+
+    document.getElementById('confirmSubtotal').textContent = '₹' + Number(order.subtotal).toLocaleString('en-IN');
+    document.getElementById('confirmDelivery').textContent = Number(order.delivery_charge) > 0 ? '₹' + Number(order.delivery_charge).toLocaleString('en-IN') : 'FREE';
+    document.getElementById('confirmTotal').textContent = '₹' + Number(order.final_total).toLocaleString('en-IN');
+
+    // WhatsApp Direct Message
+    const waText = encodeURIComponent(`Hello Dasari Heritage Sarees, I have placed Order ${order.id} for ₹${Number(order.final_total).toLocaleString('en-IN')}. Please confirm my order.`);
+    document.getElementById('confirmWhatsAppBtn').href = `https://wa.me/919652262173?text=${waText}`;
+
+    document.getElementById('orderConfirmModal').classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function closeOrderConfirmModal() {
+    document.getElementById('orderConfirmModal').classList.remove('open');
+    document.body.style.overflow = '';
+  }
+
+  document.getElementById('orderConfirmModal')?.addEventListener('click', function(e) {
+    if (e.target === this) closeOrderConfirmModal();
+  });
 
   // ============ SEARCH ============
   function openSearch() {
