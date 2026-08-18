@@ -1554,7 +1554,18 @@ const products = [
   colors: ["#5A1620", "#D4B880"],
   badge: "New",
   img: "/1.png"  
-}
+},
+  {
+    id: 14,
+    name: "Floral Zari Saree",
+    fabric: "Polyester Blend",
+    price: 1999,
+    mrp: 2499,
+    category: "festive",
+    colors: ["#007a87", "#4a1936", "#c59b27"],
+    badge: "New",
+    img: "dhs002.png"
+  }
 ];
 
   // ============ STATE ============
@@ -1595,9 +1606,9 @@ const products = [
 
   // ============ RENDER GRIDS ============
   function renderProducts() {
-    document.getElementById('silkGrid').innerHTML = products.filter(p => p.category === 'silk').slice(0, 4).map(productCard).join('');
-    document.getElementById('bestSellersGrid').innerHTML = products.filter(p => p.badge === 'Best Seller' || p.badge === 'Premium' || p.badge === 'Bridal').slice(0, 4).map(productCard).join('');
-    document.getElementById('newArrivalsGrid').innerHTML = products.filter(p => p.category === 'new' || p.badge === 'New' || p.badge === 'New Arrival').slice(0, 4).map(productCard).join('');
+    document.getElementById('silkGrid').innerHTML = products.filter(p => p.category === 'silk').map(productCard).join('');
+    document.getElementById('bestSellersGrid').innerHTML = products.filter(p => p.badge === 'Best Seller' || p.badge === 'Premium' || p.badge === 'Bridal').map(productCard).join('');
+    document.getElementById('newArrivalsGrid').innerHTML = products.filter(p => p.category === 'new' || p.badge === 'New' || p.badge === 'New Arrival').map(productCard).join('');
   }
 
   // ============ CART ============
