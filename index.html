@@ -1377,16 +1377,16 @@
     </button>
     <div class="grid md:grid-cols-2 pb-20 md:pb-0">
       <!-- Image gallery -->
-      <div class="bg-[#f1e9df]">
+      <div class="bg-[#f1e9df] flex flex-col justify-between">
         <div class="img-swipe flex overflow-x-auto" id="productGallery">
-          <div class="aspect-[3/4]"><img id="pdImg1" src="" alt="" class="w-full h-full object-cover"></div>
-          <div class="aspect-[3/4]"><img id="pdImg2" src="" alt="" class="w-full h-full object-cover"></div>
-          <div class="aspect-[3/4]"><img id="pdImg3" src="" alt="" class="w-full h-full object-cover"></div>
+          <div class="aspect-[3/4] flex-shrink-0 w-full"><img id="pdImg1" src="" alt="" class="w-full h-full object-cover"></div>
+          <div class="aspect-[3/4] flex-shrink-0 w-full"><img id="pdImg2" src="" alt="" class="w-full h-full object-cover"></div>
+          <div class="aspect-[3/4] flex-shrink-0 w-full"><img id="pdImg3" src="" alt="" class="w-full h-full object-cover"></div>
         </div>
-        <div class="flex gap-2 p-3">
-          <button onclick="scrollGallery(0)" class="flex-1 aspect-square border border-gold/40 overflow-hidden"><img id="pdThumb1" src="" class="w-full h-full object-cover"></button>
-          <button onclick="scrollGallery(1)" class="flex-1 aspect-square border border-gold/40 overflow-hidden"><img id="pdThumb2" src="" class="w-full h-full object-cover"></button>
-          <button onclick="scrollGallery(2)" class="flex-1 aspect-square border border-gold/40 overflow-hidden"><img id="pdThumb3" src="" class="w-full h-full object-cover"></button>
+        <div class="flex gap-2 p-3 overflow-x-auto" id="productThumbs">
+          <button onclick="scrollGallery(0)" class="w-14 h-16 sm:w-16 sm:h-20 flex-shrink-0 border border-gold/40 overflow-hidden"><img id="pdThumb1" src="" class="w-full h-full object-cover"></button>
+          <button onclick="scrollGallery(1)" class="w-14 h-16 sm:w-16 sm:h-20 flex-shrink-0 border border-gold/40 overflow-hidden"><img id="pdThumb2" src="" class="w-full h-full object-cover"></button>
+          <button onclick="scrollGallery(2)" class="w-14 h-16 sm:w-16 sm:h-20 flex-shrink-0 border border-gold/40 overflow-hidden"><img id="pdThumb3" src="" class="w-full h-full object-cover"></button>
         </div>
       </div>
       <!-- Product info -->
@@ -1636,6 +1636,35 @@ const products = [
     colors: ["#007a87", "#4a1936", "#c59b27"],
     badge: "New",
     img: "dhs002.png"
+  },
+  {
+    id: 15,
+    name: "Teal Green & Pink Gold Flora Jewelry Saree",
+    fabric: "Aditya Birla Rayon & Polyester",
+    price: 1799,
+    mrp: 1999,
+    category: "festive",
+    colorName: "Teal Green & Pink",
+    colors: [],
+    badge: "New Arrival",
+    img: "images/teal-pink-flora-1.jpg",
+    images: [
+      "images/teal-pink-flora-1.jpg",
+      "images/teal-pink-flora-2.jpg",
+      "images/teal-pink-flora-3.jpg",
+      "images/teal-pink-flora-4.jpg",
+      "images/teal-pink-flora-5.jpg"
+    ],
+    description: "Exquisite Teal Green & Pink saree featuring rich gold floral woven work with an intricate gold border. Crafted in premium Aditya Birla Rayon & Polyester blend for a graceful drape, complete with an included matching blouse piece.",
+    details: {
+      color: "Teal Green & Pink",
+      fabric: "Aditya Birla Rayon & Polyester",
+      work: "Gold Floral Woven Work with Intricate Gold Border",
+      length: "Approx. 7 meters including blouse piece",
+      blouse: "Included",
+      occasion: "Festive Wear, Wedding Wear, Traditional Wear, Party Wear",
+      care: "Dry clean recommended. Store in a cool, dry place away from direct sunlight. Fold carefully and store in a saree cover."
+    }
   }
 ];
 
@@ -1659,8 +1688,8 @@ const products = [
         <div class="p-4 lg:p-5">
           <p class="text-[10px] tracking-[0.2em] uppercase text-gold-dark mb-1.5">${p.fabric}</p>
           <h3 class="font-display text-base lg:text-lg leading-snug mb-2 text-ink">${p.name}</h3>
-          <div class="flex items-center gap-1.5 mb-3">
-            ${p.colors.map(c => `<span class="color-dot" style="background:${c}"></span>`).join('')}
+          <div class="flex items-center gap-1.5 mb-3 min-h-[16px]">
+            ${(p.colors && p.colors.length > 0) ? p.colors.map(c => `<span class="color-dot" style="background:${c}"></span>`).join('') : `<span class="text-xs text-ink/70 font-medium">${p.colorName || ''}</span>`}
           </div>
           <div class="flex items-baseline gap-2 mb-4">
             <span class="font-display text-lg lg:text-xl font-bold text-burgundy">₹${p.price.toLocaleString('en-IN')}</span>
@@ -1796,12 +1825,31 @@ const products = [
     currentColorIdx = 0;
     currentQty = 1;
     const p = currentProduct;
-    document.getElementById('pdImg1').src = p.img;
-    document.getElementById('pdImg2').src = p.img.replace('w=600', 'w=600&sat=-20');
-    document.getElementById('pdImg3').src = p.img.replace('w=600', 'w=600&sat=20');
-    document.getElementById('pdThumb1').src = p.img;
-    document.getElementById('pdThumb2').src = p.img.replace('w=600', 'w=600&sat=-20');
-    document.getElementById('pdThumb3').src = p.img.replace('w=600', 'w=600&sat=20');
+
+    // Gallery images: use p.images if defined, otherwise fallback to existing images
+    const imgs = (p.images && p.images.length > 0) ? p.images : [
+      p.img,
+      (p.img.includes('unsplash') ? p.img.replace('w=600', 'w=600&sat=-20') : p.img),
+      (p.img.includes('unsplash') ? p.img.replace('w=600', 'w=600&sat=20') : p.img)
+    ];
+
+    const galleryEl = document.getElementById('productGallery');
+    const thumbsContainer = document.getElementById('productThumbs');
+
+    if (galleryEl) {
+      galleryEl.innerHTML = imgs.map((src, i) => `
+        <div class="aspect-[3/4] flex-shrink-0 w-full"><img src="${src}" alt="${p.name} - View ${i+1}" class="w-full h-full object-cover"></div>
+      `).join('');
+      galleryEl.scrollLeft = 0;
+    }
+
+    if (thumbsContainer) {
+      thumbsContainer.innerHTML = imgs.map((src, i) => `
+        <button onclick="scrollGallery(${i})" class="w-14 h-16 sm:w-16 sm:h-20 flex-shrink-0 border ${i === 0 ? 'border-burgundy' : 'border-gold/40'} overflow-hidden hover:border-burgundy transition" aria-label="View photo ${i+1}">
+          <img src="${src}" alt="" class="w-full h-full object-cover">
+        </button>
+      `).join('');
+    }
 
     const discount = p.mrp ? Math.round(((p.mrp - p.price) / p.mrp) * 100) : 0;
     document.getElementById('productDetailContent').innerHTML = `
@@ -1813,14 +1861,33 @@ const products = [
         ${p.mrp ? `<span class="text-base text-ink/40 line-through">₹${p.mrp.toLocaleString('en-IN')}</span>` : ''}
         ${discount > 0 ? `<span class="bg-emerald/10 text-emerald text-xs px-2 py-1">${discount}% Off</span>` : ''}
       </div>
-      <p class="text-sm text-ink/70 leading-relaxed mb-5">A timeless ${p.fabric.toLowerCase()} saree handwoven by master artisans. Features intricate zari borders, traditional motifs and a luxurious pallu — perfect for weddings, festivities and cherished occasions.</p>
+      <p class="text-sm text-ink/70 leading-relaxed mb-5">${p.description || `A timeless ${p.fabric.toLowerCase()} saree handwoven by master artisans. Features intricate zari borders, traditional motifs and a luxurious pallu — perfect for weddings, festivities and cherished occasions.`}</p>
 
+      ${(p.colors && p.colors.length > 0) ? `
       <div class="mb-5">
         <p class="text-xs tracking-[0.2em] uppercase text-ink/60 mb-2.5">Color</p>
         <div class="flex gap-2.5" id="colorOptions">
           ${p.colors.map((c, i) => `<button onclick="selectColor(${i})" class="color-opt w-8 h-8 rounded-full border-2 ${i === 0 ? 'border-burgundy' : 'border-transparent'} flex items-center justify-center" style="background:${c}">${i === 0 ? '<i class="fa-solid fa-check text-[10px] text-ivory"></i>' : ''}</button>`).join('')}
         </div>
       </div>
+      ` : `
+      <div class="mb-5">
+        <p class="text-xs tracking-[0.2em] uppercase text-ink/60 mb-1">Color</p>
+        <p class="text-sm font-semibold text-ink">${p.colorName || 'Teal Green & Pink'}</p>
+      </div>
+      `}
+
+      ${p.details ? `
+      <div class="mb-5 bg-[#FAF7F2] p-4 border border-gold/30 text-xs space-y-2 text-ink/80 rounded-sm">
+        ${p.details.color ? `<div class="flex justify-between pb-1 border-b border-gold/15"><span class="text-ink/60 uppercase tracking-wider text-[10px]">Color</span> <span class="font-medium text-ink">${p.details.color}</span></div>` : ''}
+        ${p.details.fabric ? `<div class="flex justify-between pb-1 border-b border-gold/15"><span class="text-ink/60 uppercase tracking-wider text-[10px]">Fabric</span> <span class="font-medium text-ink">${p.details.fabric}</span></div>` : ''}
+        ${p.details.work ? `<div class="flex justify-between pb-1 border-b border-gold/15"><span class="text-ink/60 uppercase tracking-wider text-[10px]">Work</span> <span class="font-medium text-ink text-right max-w-[65%]">${p.details.work}</span></div>` : ''}
+        ${p.details.length ? `<div class="flex justify-between pb-1 border-b border-gold/15"><span class="text-ink/60 uppercase tracking-wider text-[10px]">Saree Length</span> <span class="font-medium text-ink">${p.details.length}</span></div>` : ''}
+        ${p.details.blouse ? `<div class="flex justify-between pb-1 border-b border-gold/15"><span class="text-ink/60 uppercase tracking-wider text-[10px]">Blouse Piece</span> <span class="font-medium text-ink">${p.details.blouse}</span></div>` : ''}
+        ${p.details.occasion ? `<div class="flex justify-between pb-1 border-b border-gold/15"><span class="text-ink/60 uppercase tracking-wider text-[10px]">Occasion</span> <span class="font-medium text-ink text-right max-w-[65%]">${p.details.occasion}</span></div>` : ''}
+        ${p.details.care ? `<div class="pt-1"><span class="text-ink/60 uppercase tracking-wider text-[10px] block mb-0.5">Care Instructions</span> <p class="text-[11px] text-ink/70 leading-relaxed">${p.details.care}</p></div>` : ''}
+      </div>
+      ` : ''}
 
       <div class="mb-6">
         <p class="text-xs tracking-[0.2em] uppercase text-ink/60 mb-2.5">Quantity</p>
@@ -1927,7 +1994,19 @@ const products = [
 
   function scrollGallery(idx) {
     const gallery = document.getElementById('productGallery');
-    gallery.scrollTo({ left: idx * gallery.offsetWidth, behavior: 'smooth' });
+    if (gallery && gallery.children[idx]) {
+      gallery.children[idx].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'start' });
+    }
+    const thumbs = document.querySelectorAll('#productThumbs button');
+    thumbs.forEach((t, i) => {
+      if (i === idx) {
+        t.classList.add('border-burgundy');
+        t.classList.remove('border-gold/40');
+      } else {
+        t.classList.remove('border-burgundy');
+        t.classList.add('border-gold/40');
+      }
+    });
   }
 
     // ============ CHECKOUT & ORDER MANAGEMENT ============
