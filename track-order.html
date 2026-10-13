@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Track Your Order — DASARI HERITAGE SAREES</title>
+    <meta name="description"
+        content="Track your Dasari Heritage Sarees order status, shipping and delivery updates in real-time.">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        burgundy: '#5A1620',
+                        plum: '#3C2030',
+                        emerald: '#0F6B48',
+                        ivory: '#F6EFE8',
+                        gold: '#D4B880',
+                        'gold-light': '#E8C995',
+                        'gold-dark': '#A8884E',
+                        ink: '#111111'
+                    },
+                    fontFamily: {
+                        display: ['"Playfair Display"', 'serif'],
+                        decor: ['"Cormorant Garamond"', 'serif'],
+                        body: ['Inter', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        :root {
+            --burgundy: #5A1620;
+            --plum: #3C2030;
+            --emerald: #0F6B48;
+            --ivory: #F6EFE8;
+            --gold: #D4B880;
+            --gold-light: #E8C995;
+            --gold-dark: #A8884E;
+            --ink: #111111;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: var(--ivory);
+            color: var(--ink);
+            min-height: 100vh;
+        }
+
+        /* Progress tracker */
+        .progress-track {
+            position: relative;
+        }
+
+        .progress-step {
+            position: relative;
+            display: flex;
+            align-items: flex-start;
+            gap: 16px;
+            padding-bottom: 32px;
+        }
+
+        .progress-step:last-child {
+            padding-bottom: 0;
+        }
+
+        .progress-step::before {
+            content: '';
+            position: absolute;
+            left: 17px;
+            top: 38px;
+            width: 2px;
+            height: calc(100% - 38px);
+            background: rgba(212, 184, 128, 0.35);
+        }
+
+        .progress-step:last-child::before {
+            display: none;
+        }
+
+        .progress-step.completed::before {
+            background: var(--emerald);
+        }
+
+        .progress-step.active::before {
+            background: linear-gradient(180deg, var(--emerald) 0%, rgba(212, 184, 128, 0.35) 100%);
+        }
+
+        .step-icon {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            font-size: 14px;
+            border: 2px solid rgba(212, 184, 128, 0.4);
+            background: #fff;
+            color: rgba(0, 0, 0, 0.3);
+            transition: all 400ms ease;
+            z-index: 1;
+        }
+
+        .progress-step.completed .step-icon {
+            background: var(--emerald);
+            border-color: var(--emerald);
+            color: #fff;
+        }
+
+        .progress-step.active .step-icon {
+            background: var(--burgundy);
+            border-color: var(--burgundy);
+            color: #fff;
+            box-shadow: 0 0 0 4px rgba(90, 22, 32, 0.15);
+            animation: pulse-ring 2s ease-out infinite;
+        }
+
+        .progress-step.cancelled .step-icon {
+            background: #DC2626;
+            border-color: #DC2626;
+            color: #fff;
+        }
+
+        @keyframes pulse-ring {
+            0% {
+                box-shadow: 0 0 0 0 rgba(90, 22, 32, 0.3);
+            }
+
+            70% {
+                box-shadow: 0 0 0 8px rgba(90, 22, 32, 0);
+            }
+
+            100% {
+                box-shadow: 0 0 0 0 rgba(90, 22, 32, 0);
+            }
+        }
+
+        .step-title {
+            font-weight: 600;
+            font-size: 13px;
+            color: rgba(0, 0, 0, 0.35);
+            transition: color 300ms ease;
+        }
+
+        .progress-step.completed .step-title,
+        .progress-step.active .step-title {
+            color: var(--ink);
+        }
+
+        .progress-step.cancelled .step-title {
+            color: #DC2626;
+        }
+
+        .step-time {
+            font-size: 11px;
+            color: rgba(0, 0, 0, 0.4);
+            margin-top: 2px;
+        }
+
+        .lux-card {
+            background: #fff;
+            border: 1px solid rgba(212, 184, 128, 0.35);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03);
+        }
+
+        .status-badge {
+            font-size: 11px;
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            font-weight: 600;
+            padding: 3px 10px;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .status-pending {
+            background: #FEF3C7;
+            color: #92400E;
+        }
+
+        .status-confirmed {
+            background: #E0E7FF;
+            color: #3730A3;
+        }
+
+        .status-packed {
+            background: #F3E8FF;
+            color: #6B21A8;
+        }
+
+        .status-shipped {
+            background: #DBEAFE;
+            color: #1E40AF;
+        }
+
+        .status-delivered {
+            background: #D1FAE5;
+            color: #065F46;
+        }
+
+        .status-cancelled {
+            background: #FEE2E2;
+            color: #991B1B;
+        }
+
+        .gold-divider {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 14px;
+        }
+
+        .gold-divider::before,
+        .gold-divider::after {
+            content: '';
+            height: 1px;
+            width: 40px;
+            background: linear-gradient(90deg, transparent, var(--gold), transparent);
+        }
+
+        /* Smooth entrance */
+        .fade-in {
+            animation: fadeIn 600ms ease-out both;
+        }
+
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(16px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .btn-primary {
+            background: var(--burgundy);
+            color: var(--ivory);
+            padding: 14px 32px;
+            letter-spacing: 0.18em;
+            font-size: 12px;
+            text-transform: uppercase;
+            font-weight: 600;
+            transition: all 350ms ease;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background: var(--plum);
+            transform: translateY(-1px);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- ============ HEADER ============ -->
+    <header class="bg-burgundy text-ivory border-b border-gold/30">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 py-3.5 flex items-center justify-between">
+            <a href="index.html" class="flex items-center gap-2.5 text-ivory group">
+                <div
+                    class="w-9 h-9 rounded-full border border-gold/50 flex items-center justify-center bg-plum/50 text-gold">
+                    <i class="fa-solid fa-feather-pointed text-sm"></i>
+                </div>
+                <div>
+                    <h1 class="font-display text-lg tracking-wider font-semibold leading-tight">DASARI HERITAGE</h1>
+                    <p class="text-[10px] tracking-[0.2em] text-gold uppercase">Sarees</p>
+                </div>
+            </a>
+            <a href="index.html"
+                class="px-3 py-1.5 border border-gold/40 rounded text-xs text-ivory/90 hover:bg-plum/50 transition flex items-center gap-1.5">
+                <i class="fa-solid fa-store text-[11px]"></i> <span class="hidden sm:inline">Shop</span>
+            </a>
+        </div>
+    </header>
+
+    <!-- ============ MAIN CONTENT ============ -->
+    <main class="max-w-2xl mx-auto px-4 sm:px-6 py-8 lg:py-12">
+
+        <!-- ============ SEARCH FORM ============ -->
+        <div id="trackingForm" class="text-center">
+            <div class="gold-divider mb-4">
+                <span class="text-[11px] tracking-[0.25em] uppercase text-gold-dark font-medium">Order Tracking</span>
+            </div>
+            <h2 class="font-display text-2xl sm:text-3xl font-medium text-ink mb-2">Track Your Order</h2>
+            <p class="text-sm text-ink/60 mb-8 max-w-md mx-auto">Enter your Order ID and the phone number you used
+                during checkout to view your order status.</p>
+
+            <form onsubmit="trackOrder(event)" class="lux-card p-6 sm:p-8 rounded-sm text-left space-y-4">
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-ink/70 font-semibold mb-1.5">Order
+                        ID</label>
+                    <div class="relative">
+                        <i
+                            class="fa-solid fa-hashtag absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30 text-xs"></i>
+                        <input type="text" id="trackOrderId" required placeholder="e.g. DH20261234"
+                            class="w-full pl-9 pr-4 py-3 border border-gold/40 focus:border-burgundy focus:outline-none text-sm bg-ivory/50 transition uppercase tracking-wider font-medium"
+                            autocomplete="off">
+                    </div>
+                </div>
+                <div>
+                    <label class="block text-xs uppercase tracking-wider text-ink/70 font-semibold mb-1.5">Phone
+                        Number</label>
+                    <div class="relative">
+                        <i class="fa-solid fa-phone absolute left-3.5 top-1/2 -translate-y-1/2 text-ink/30 text-xs"></i>
+                        <input type="tel" id="trackPhone" required placeholder="10-digit phone used at checkout"
+                            class="w-full pl-9 pr-4 py-3 border border-gold/40 focus:border-burgundy focus:outline-none text-sm bg-ivory/50 transition tracking-wider"
+                            pattern="[0-9]{10}" maxlength="10" autocomplete="off">
+                    </div>
+                    <p class="text-[10px] text-ink/40 mt-1">We use your phone number to verify your identity.</p>
+                </div>
+                <p id="trackError" class="text-xs text-rose-600 hidden flex items-center gap-1.5">
+                    <i class="fa-solid fa-circle-exclamation"></i> <span></span>
+                </p>
+                <button type="submit" id="btnTrack" class="btn-primary w-full">
+                    <i class="fa-solid fa-magnifying-glass text-[11px]"></i>
+                    <span>Track Order</span>
+                </button>
+            </form>
+
+            <p class="text-xs text-ink/40 mt-6">
+                Need help? <a href="https://wa.me/919652262173?text=Hi,%20I%20need%20help%20tracking%20my%20order."
+                    target="_blank" class="text-emerald hover:underline"><i class="fa-brands fa-whatsapp"></i> WhatsApp
+                    us</a>
+            </p>
+        </div>
+
+        <!-- ============ TRACKING RESULT ============ -->
+        <div id="trackingResult" class="hidden">
+
+            <!-- Back Button -->
+            <button onclick="showTrackingForm()"
+                class="text-xs text-ink/60 hover:text-burgundy transition flex items-center gap-1.5 mb-6">
+                <i class="fa-solid fa-arrow-left text-[10px]"></i> Track Another Order
+            </button>
+
+            <!-- Order Header Card -->
+            <div class="lux-card p-5 sm:p-6 rounded-sm mb-5 fade-in">
+                <div class="flex flex-wrap items-start justify-between gap-3 mb-4 pb-3 border-b border-gold/20">
+                    <div>
+                        <span class="text-[10px] tracking-[0.2em] uppercase text-gold-dark font-medium block">Order
+                            ID</span>
+                        <span id="resultOrderId" class="font-display text-xl font-bold text-burgundy">DH20260001</span>
+                    </div>
+                    <div class="text-right">
+                        <span class="text-[10px] tracking-[0.2em] uppercase text-gold-dark font-medium block">Current
+                            Status</span>
+                        <span id="resultStatusBadge" class="status-badge status-pending mt-1">Pending</span>
+                    </div>
+                </div>
+                <div class="grid grid-cols-2 gap-3 text-xs text-ink/70">
+                    <div>
+                        <span class="text-ink/40 text-[10px] uppercase tracking-wider block">Customer</span>
+                        <span id="resultCustomerName" class="font-medium text-ink">-</span>
+                    </div>
+                    <div>
+                        <span class="text-ink/40 text-[10px] uppercase tracking-wider block">Placed On</span>
+                        <span id="resultDate" class="font-medium text-ink">-</span>
+                    </div>
+                    <div id="resultCourierWrap" class="hidden">
+                        <span class="text-ink/40 text-[10px] uppercase tracking-wider block">Courier</span>
+                        <span id="resultCourier" class="font-medium text-ink">-</span>
+                    </div>
+                    <div id="resultTrackingWrap" class="hidden">
+                        <span class="text-ink/40 text-[10px] uppercase tracking-wider block">Tracking Number</span>
+                        <span id="resultTracking" class="font-semibold text-burgundy">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Progress Tracker -->
+            <div class="lux-card p-5 sm:p-6 rounded-sm mb-5 fade-in" style="animation-delay: 100ms">
+                <h3
+                    class="font-display text-sm font-bold text-burgundy mb-4 pb-2 border-b border-gold/20 flex items-center gap-2">
+                    <i class="fa-solid fa-route text-xs text-gold-dark"></i> Order Progress
+                </h3>
+                <div class="progress-track" id="progressTrack">
+                    <!-- Filled by JS -->
+                </div>
+            </div>
+
+            <!-- Order Items -->
+            <div class="lux-card p-5 sm:p-6 rounded-sm mb-5 fade-in" style="animation-delay: 200ms">
+                <h3
+                    class="font-display text-sm font-bold text-burgundy mb-3 pb-2 border-b border-gold/20 flex items-center gap-2">
+                    <i class="fa-solid fa-bag-shopping text-xs text-gold-dark"></i> Ordered Items
+                </h3>
+                <div id="resultItems" class="space-y-3 text-xs">
+                    <!-- Filled by JS -->
+                </div>
+                <div class="mt-4 pt-3 border-t border-gold/30 space-y-1 text-right text-xs">
+                    <div class="flex justify-between text-ink/60">
+                        <span>Subtotal:</span>
+                        <span id="resultSubtotal" class="font-medium">₹0</span>
+                    </div>
+                    <div class="flex justify-between text-ink/60">
+                        <span>Delivery:</span>
+                        <span id="resultDelivery" class="font-medium">FREE</span>
+                    </div>
+                    <div class="flex justify-between text-sm font-bold text-burgundy pt-1 border-t border-gold/20">
+                        <span>Total:</span>
+                        <span id="resultTotal" class="font-display text-base">₹0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Refresh & Actions -->
+            <div class="flex flex-col sm:flex-row gap-3 fade-in" style="animation-delay: 300ms">
+                <button onclick="refreshTracking()" class="btn-primary flex-1" id="btnRefresh">
+                    <i class="fa-solid fa-rotate text-[11px]"></i>
+                    <span>Refresh Status</span>
+                </button>
+                <a id="resultWhatsApp" href="#" target="_blank"
+                    class="btn-primary flex-1 !bg-emerald hover:!bg-emerald/80 text-center no-underline">
+                    <i class="fa-brands fa-whatsapp text-base"></i>
+                    <span>Contact Us</span>
+                </a>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="bg-plum text-ivory/70 text-center py-5 text-xs tracking-wider mt-auto">
+        <p>© 2026 Dasari Heritage Sarees. All rights reserved.</p>
+    </footer>
+
+    <!-- ============ JAVASCRIPT ============ -->
+    <script>
+        const STATUS_STAGES = ['Pending', 'Confirmed', 'Packed', 'Shipped', 'Delivered'];
+        const STATUS_ICONS = {
+            'Pending': 'fa-clock',
+            'Confirmed': 'fa-circle-check',
+            'Packed': 'fa-box',
+            'Shipped': 'fa-truck-fast',
+            'Delivered': 'fa-house-circle-check',
+            'Cancelled': 'fa-ban'
+        };
+
+        let currentTrackingData = null;
+
+        async function trackOrder(e) {
+            e.preventDefault();
+            const orderId = document.getElementById('trackOrderId').value.trim().toUpperCase();
+            const phone = document.getElementById('trackPhone').value.trim();
+            const errEl = document.getElementById('trackError');
+            const btn = document.getElementById('btnTrack');
+
+            errEl.classList.add('hidden');
+
+            if (!orderId || !phone || phone.length !== 10) {
+                errEl.querySelector('span').textContent = 'Please enter a valid Order ID and 10-digit phone number.';
+                errEl.classList.remove('hidden');
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Looking up order...</span>';
+
+            try {
+                const res = await fetch(`/api/orders?id=${encodeURIComponent(orderId)}&phone=${encodeURIComponent(phone)}`);
+                const data = await res.json();
+
+                if (res.ok && data.success && data.order) {
+                    currentTrackingData = data;
+                    renderTrackingResult(data.order, data.status_history || []);
+                } else {
+                    errEl.querySelector('span').textContent = data.error || 'Order not found. Please check your Order ID and phone number.';
+                    errEl.classList.remove('hidden');
+                }
+            } catch (err) {
+                errEl.querySelector('span').textContent = 'Could not connect to server. Please try again later.';
+                errEl.classList.remove('hidden');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-magnifying-glass text-[11px]"></i> <span>Track Order</span>';
+            }
+        }
+
+        function renderTrackingResult(order, statusHistory) {
+            document.getElementById('trackingForm').classList.add('hidden');
+            document.getElementById('trackingResult').classList.remove('hidden');
+
+            // Header info
+            document.getElementById('resultOrderId').textContent = order.id;
+            document.getElementById('resultCustomerName').textContent = order.customer_name;
+            document.getElementById('resultDate').textContent = new Date(order.created_at).toLocaleDateString('en-IN', {
+                day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+            });
+
+            const statusBadge = document.getElementById('resultStatusBadge');
+            statusBadge.textContent = order.order_status || 'Pending';
+            statusBadge.className = `status-badge status-${(order.order_status || 'Pending').toLowerCase()}`;
+
+            // Courier & tracking info
+            if (order.courier_name) {
+                document.getElementById('resultCourierWrap').classList.remove('hidden');
+                document.getElementById('resultCourier').textContent = order.courier_name;
+            } else {
+                document.getElementById('resultCourierWrap').classList.add('hidden');
+            }
+            if (order.tracking_number) {
+                document.getElementById('resultTrackingWrap').classList.remove('hidden');
+                document.getElementById('resultTracking').textContent = order.tracking_number;
+            } else {
+                document.getElementById('resultTrackingWrap').classList.add('hidden');
+            }
+
+            // Progress tracker
+            renderProgressTracker(order.order_status || 'Pending', statusHistory);
+
+            // Items
+            const itemsContainer = document.getElementById('resultItems');
+            const items = Array.isArray(order.items) ? order.items : [];
+            itemsContainer.innerHTML = items.map(item => `
+        <div class="flex items-center gap-3">
+          <img src="${item.img || 'dhs002.png'}" class="w-12 h-14 object-cover rounded-sm border border-gold/30 flex-shrink-0" alt="${item.name}">
+          <div class="flex-1 min-w-0">
+            <p class="font-display text-sm font-semibold text-ink leading-tight truncate">${item.name}</p>
+            <p class="text-[11px] text-ink/50">${item.fabric || 'Saree'} • Qty: ${item.qty || 1}</p>
+          </div>
+          <p class="font-semibold text-burgundy whitespace-nowrap">₹${Number(item.price || 0).toLocaleString('en-IN')}</p>
+        </div>
+      `).join('');
+
+            // Totals
+            document.getElementById('resultSubtotal').textContent = '₹' + Number(order.subtotal || 0).toLocaleString('en-IN');
+            document.getElementById('resultDelivery').textContent = Number(order.delivery_charge) > 0 ? '₹' + Number(order.delivery_charge).toLocaleString('en-IN') : 'FREE';
+            document.getElementById('resultTotal').textContent = '₹' + Number(order.final_total || 0).toLocaleString('en-IN');
+
+            // WhatsApp
+            const waText = encodeURIComponent(`Hi, I want to enquire about my Order ${order.id}. Current status: ${order.order_status}.`);
+            document.getElementById('resultWhatsApp').href = `https://wa.me/919652262173?text=${waText}`;
+        }
+
+        function renderProgressTracker(currentStatus, statusHistory) {
+            const track = document.getElementById('progressTrack');
+            const isCancelled = currentStatus === 'Cancelled';
+            const currentIdx = STATUS_STAGES.indexOf(currentStatus);
+
+            // Build a map of timestamps from status history
+            const historyMap = {};
+            (statusHistory || []).forEach(h => {
+                historyMap[h.new_status] = h.changed_at;
+            });
+
+            let html = '';
+
+            STATUS_STAGES.forEach((stage, idx) => {
+                let stateClass = '';
+                let iconHtml = '';
+
+                if (isCancelled) {
+                    stateClass = '';
+                    iconHtml = `<i class="fa-solid ${STATUS_ICONS[stage]}"></i>`;
+                } else if (idx < currentIdx) {
+                    stateClass = 'completed';
+                    iconHtml = `<i class="fa-solid fa-check"></i>`;
+                } else if (idx === currentIdx) {
+                    stateClass = 'active';
+                    iconHtml = `<i class="fa-solid ${STATUS_ICONS[stage]}"></i>`;
+                } else {
+                    stateClass = '';
+                    iconHtml = `<i class="fa-solid ${STATUS_ICONS[stage]}"></i>`;
+                }
+
+                const timestamp = historyMap[stage];
+                const timeStr = timestamp ? new Date(timestamp).toLocaleDateString('en-IN', {
+                    day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                }) : '';
+
+                html += `
+          <div class="progress-step ${stateClass}">
+            <div class="step-icon">${iconHtml}</div>
+            <div>
+              <div class="step-title">${stage}</div>
+              ${timeStr ? `<div class="step-time">${timeStr}</div>` : ''}
+            </div>
+          </div>
+        `;
+            });
+
+            // Add cancelled step if order is cancelled
+            if (isCancelled) {
+                const cancelTime = historyMap['Cancelled'];
+                const cancelTimeStr = cancelTime ? new Date(cancelTime).toLocaleDateString('en-IN', {
+                    day: '2-digit', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit'
+                }) : '';
+
+                html += `
+          <div class="progress-step cancelled">
+            <div class="step-icon"><i class="fa-solid fa-ban"></i></div>
+            <div>
+              <div class="step-title">Cancelled</div>
+              ${cancelTimeStr ? `<div class="step-time">${cancelTimeStr}</div>` : ''}
+            </div>
+          </div>
+        `;
+            }
+
+            track.innerHTML = html;
+        }
+
+        async function refreshTracking() {
+            const orderId = document.getElementById('resultOrderId').textContent.trim();
+            const phone = document.getElementById('trackPhone').value.trim();
+            const btn = document.getElementById('btnRefresh');
+
+            if (!orderId || !phone) {
+                showTrackingForm();
+                return;
+            }
+
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> <span>Refreshing...</span>';
+
+            try {
+                const res = await fetch(`/api/orders?id=${encodeURIComponent(orderId)}&phone=${encodeURIComponent(phone)}`);
+                const data = await res.json();
+
+                if (res.ok && data.success && data.order) {
+                    currentTrackingData = data;
+                    renderTrackingResult(data.order, data.status_history || []);
+                }
+            } catch (err) {
+                // Silent fail on refresh
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fa-solid fa-rotate text-[11px]"></i> <span>Refresh Status</span>';
+            }
+        }
+
+        function showTrackingForm() {
+            document.getElementById('trackingResult').classList.add('hidden');
+            document.getElementById('trackingForm').classList.remove('hidden');
+            currentTrackingData = null;
+        }
+    </script>
+</body>
+
+</html>

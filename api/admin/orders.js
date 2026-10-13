@@ -45,26 +45,25 @@ module.exports = async function handler(req, res) {
   const supabaseUrl = process.env.SUPABASE_URL;
   const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY || process.env.SUPABASE_ANON_KEY;
 
-  // GET: Fetch and filter orders
+  // GET: Fetch all orders (with optional filters)
   if (req.method === 'GET') {
     const { status, search } = req.query;
 
     if (supabaseUrl && supabaseKey) {
       try {
-        let endpoint = ${supabaseUrl}/rest/v1/orders?select=*&order=created_at.desc;
+        let endpoint = `${supabaseUrl}/rest/v1/orders?select=*&order=created_at.desc`;
         if (status && status !== 'All') {
-          endpoint += &order_status=eq.;
+          endpoint += `&order_status=eq.${encodeURIComponent(status)}`;
         }
         if (search) {
-          // Full-text / ilike search
-          const s = encodeURIComponent(**);
-          endpoint += &or=(id.ilike.,customer_name.ilike.,mobile_number.ilike.);
+          const s = encodeURIComponent(`%${search}%`);
+          endpoint += `&or=(id.ilike.${s},customer_name.ilike.${s},mobile_number.ilike.${s})`;
         }
 
         const response = await fetch(endpoint, {
           headers: {
             'apikey': supabaseKey,
-            'Authorization': Bearer 
+            'Authorization': `Bearer ${supabaseKey}`
           }
         });
 
@@ -88,11 +87,11 @@ module.exports = async function handler(req, res) {
     });
   }
 
-  // PATCH: Update order status or payment status
+  // PATCH: Update order status, payment status, tracking info
   if (req.method === 'PATCH') {
     try {
       const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
-      const { id, order_status, payment_status, notes } = body;
+      const { id, order_status, payment_status, notes, tracking_number, courier_name } = body;
 
       if (!id) {
         return res.status(400).json({ error: 'Order ID is required' });
@@ -102,14 +101,37 @@ module.exports = async function handler(req, res) {
       if (order_status) updates.order_status = order_status;
       if (payment_status) updates.payment_status = payment_status;
       if (notes !== undefined) updates.notes = notes;
+      if (tracking_number !== undefined) updates.tracking_number = tracking_number;
+      if (courier_name !== undefined) updates.courier_name = courier_name;
+      updates.updated_at = new Date().toISOString();
 
       if (supabaseUrl && supabaseKey) {
-        const response = await fetch(${supabaseUrl}/rest/v1/orders?id=eq., {
+        // First, get the current order to record status change history
+        let previousStatus = null;
+        if (order_status) {
+          try {
+            const currentRes = await fetch(`${supabaseUrl}/rest/v1/orders?id=eq.${encodeURIComponent(id)}&select=order_status`, {
+              headers: {
+                'apikey': supabaseKey,
+                'Authorization': `Bearer ${supabaseKey}`
+              }
+            });
+            const currentData = await currentRes.json();
+            if (currentData && currentData.length > 0) {
+              previousStatus = currentData[0].order_status;
+            }
+          } catch (e) {
+            console.warn('Could not fetch current status for history:', e.message);
+          }
+        }
+
+        // Update the order
+        const response = await fetch(`${supabaseUrl}/rest/v1/orders?id=eq.${encodeURIComponent(id)}`, {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
             'apikey': supabaseKey,
-            'Authorization': Bearer ,
+            'Authorization': `Bearer ${supabaseKey}`,
             'Prefer': 'return=representation'
           },
           body: JSON.stringify(updates)
@@ -121,6 +143,29 @@ module.exports = async function handler(req, res) {
         }
 
         const updated = await response.json();
+
+        // Insert status change history if order_status changed
+        if (order_status && previousStatus && previousStatus !== order_status) {
+          try {
+            await fetch(`${supabaseUrl}/rest/v1/order_status_history`, {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json',
+                'apikey': supabaseKey,
+                'Authorization': `Bearer ${supabaseKey}`
+              },
+              body: JSON.stringify({
+                order_id: id,
+                previous_status: previousStatus,
+                new_status: order_status,
+                changed_by: 'admin'
+              })
+            });
+          } catch (histErr) {
+            console.warn('Could not insert status history:', histErr.message);
+          }
+        }
+
         return res.status(200).json({ success: true, order: updated[0] });
       }
 

@@ -270,9 +270,17 @@
                 <option value="Failed">Failed</option>
               </select>
             </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-ink/60 font-semibold mb-1">Courier Name</label>
+              <input type="text" id="updateCourierName" placeholder="e.g. Delhivery, DTDC" class="border border-gold/40 px-3 py-1.5 rounded text-xs bg-ivory font-medium focus:outline-none focus:border-burgundy w-36">
+            </div>
+            <div>
+              <label class="block text-[10px] uppercase tracking-wider text-ink/60 font-semibold mb-1">Tracking Number</label>
+              <input type="text" id="updateTrackingNumber" placeholder="Tracking/AWB No." class="border border-gold/40 px-3 py-1.5 rounded text-xs bg-ivory font-medium focus:outline-none focus:border-burgundy w-44">
+            </div>
           </div>
           <button onclick="saveStatusUpdate()" id="btnSaveStatus" class="btn-lux px-5 py-2 rounded text-xs uppercase tracking-wider font-semibold flex items-center gap-2">
-            <i class="fa-solid fa-check"></i> <span>Update Status</span>
+            <i class="fa-solid fa-check"></i> <span>Update & Save</span>
           </button>
         </div>
 
@@ -329,6 +337,16 @@
               <span>Final Total:</span>
               <span id="drawerFinalTotal" class="text-base">₹0</span>
             </div>
+          </div>
+        </div>
+
+        <!-- Status History -->
+        <div class="lux-card p-4 rounded bg-white">
+          <h4 class="font-display text-sm font-bold text-burgundy mb-2 pb-1 border-b border-gold/20 flex items-center gap-2">
+            <i class="fa-solid fa-clock-rotate-left text-xs text-gold-dark"></i> Status History
+          </h4>
+          <div id="drawerStatusHistory" class="space-y-2 text-[11px] text-ink/70">
+            <p class="text-ink/40">No status history available.</p>
           </div>
         </div>
 
@@ -407,28 +425,11 @@
           showToast('Welcome back, Admin');
           fetchOrders();
         } else {
-          // Local fallback password test if running without serverless API
-          if (password === 'dasari@admin2026' || password === 'admin123') {
-            const fallbackToken = 'local_session_' + Date.now();
-            localStorage.setItem(STORAGE_KEY_TOKEN, fallbackToken);
-            document.getElementById('authModal').classList.add('hidden');
-            showToast('Authenticated (Local Dev Mode)');
-            fetchOrders();
-          } else {
-            errEl.classList.remove('hidden');
-          }
-        }
-      } catch (err) {
-        // Fallback for standalone static file preview
-        if (password === 'dasari@admin2026' || password === 'admin123') {
-          const fallbackToken = 'local_session_' + Date.now();
-          localStorage.setItem(STORAGE_KEY_TOKEN, fallbackToken);
-          document.getElementById('authModal').classList.add('hidden');
-          showToast('Authenticated (Local Dev Mode)');
-          fetchOrders();
-        } else {
           errEl.classList.remove('hidden');
         }
+      } catch (err) {
+        errEl.classList.remove('hidden');
+        showToast('Could not connect to server. Please try again.', true);
       } finally {
         btn.disabled = false;
         btn.innerHTML = '<span>Unlock Dashboard</span> <i class="fa-solid fa-arrow-right text-[11px]"></i>';
@@ -613,6 +614,8 @@
 
       document.getElementById('updateOrderStatus').value = selectedOrder.order_status || 'Pending';
       document.getElementById('updatePaymentStatus').value = selectedOrder.payment_status || 'Payment Pending';
+      document.getElementById('updateCourierName').value = selectedOrder.courier_name || '';
+      document.getElementById('updateTrackingNumber').value = selectedOrder.tracking_number || '';
 
       document.getElementById('drawerCustomerName').textContent = selectedOrder.customer_name;
       document.getElementById('drawerPhone').textContent = selectedOrder.mobile_number;
@@ -659,6 +662,8 @@
       if (!selectedOrder) return;
       const newStatus = document.getElementById('updateOrderStatus').value;
       const newPayStatus = document.getElementById('updatePaymentStatus').value;
+      const courierName = document.getElementById('updateCourierName').value.trim();
+      const trackingNumber = document.getElementById('updateTrackingNumber').value.trim();
       const btn = document.getElementById('btnSaveStatus');
 
       btn.disabled = true;
@@ -667,7 +672,7 @@
       const token = localStorage.getItem(STORAGE_KEY_TOKEN);
 
       try {
-        await fetch('/api/admin/orders', {
+        const res = await fetch('/api/admin/orders', {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
@@ -676,32 +681,34 @@
           body: JSON.stringify({
             id: selectedOrder.id,
             order_status: newStatus,
-            payment_status: newPayStatus
+            payment_status: newPayStatus,
+            courier_name: courierName,
+            tracking_number: trackingNumber
           })
         });
-      } catch(e){}
+
+        if (res.ok) {
+          const data = await res.json();
+          if (data.order) {
+            // Update local state with server response
+            Object.assign(selectedOrder, data.order);
+          }
+          showToast(`Order ${selectedOrder.id} updated successfully`);
+        } else {
+          showToast('Failed to update order on server', true);
+        }
+      } catch(e) {
+        showToast('Network error — update may not have saved', true);
+      }
 
       // Update local state
       selectedOrder.order_status = newStatus;
       selectedOrder.payment_status = newPayStatus;
+      selectedOrder.courier_name = courierName;
+      selectedOrder.tracking_number = trackingNumber;
 
-      // Update in localStorage store as well
-      const localStore = localStorage.getItem(STORAGE_KEY_LOCAL_ORDERS);
-      if (localStore) {
-        try {
-          const list = JSON.parse(localStore);
-          const idx = list.findIndex(o => o.id === selectedOrder.id);
-          if (idx !== -1) {
-            list[idx].order_status = newStatus;
-            list[idx].payment_status = newPayStatus;
-            localStorage.setItem(STORAGE_KEY_LOCAL_ORDERS, JSON.stringify(list));
-          }
-        } catch(e){}
-      }
-
-      showToast(`Order ${selectedOrder.id} status updated`);
       btn.disabled = false;
-      btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Update Status</span>';
+      btn.innerHTML = '<i class="fa-solid fa-check"></i> <span>Update & Save</span>';
       
       const badge = document.getElementById('drawerHeaderBadge');
       badge.textContent = newStatus;
