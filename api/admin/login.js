@@ -22,8 +22,13 @@ module.exports = async function handler(req, res) {
     const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
     const { password } = body;
 
-    const expectedPassword = process.env.ADMIN_PASSWORD || 'dasari@admin2026';
-    const jwtSecret = process.env.ADMIN_JWT_SECRET || 'dasari_heritage_luxury_sarees_secret_key_2026';
+    const expectedPassword = process.env.ADMIN_PASSWORD;
+    const jwtSecret = process.env.ADMIN_JWT_SECRET;
+
+    if (!expectedPassword || !jwtSecret) {
+      console.error('Admin authentication is not configured.');
+      return res.status(503).json({ error: 'Admin login is not configured' });
+    }
 
     if (!password || password !== expectedPassword) {
       return res.status(401).json({ error: 'Invalid admin credentials' });

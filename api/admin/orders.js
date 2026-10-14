@@ -12,7 +12,8 @@ function verifyAdminToken(req) {
   try {
     const payloadStr = Buffer.from(parts[0], 'base64').toString('utf-8');
     const payload = JSON.parse(payloadStr);
-    const jwtSecret = process.env.ADMIN_JWT_SECRET || 'dasari_heritage_luxury_sarees_secret_key_2026';
+    const jwtSecret = process.env.ADMIN_JWT_SECRET;
+    if (!jwtSecret) return false;
 
     const expectedHmac = crypto.createHmac('sha256', jwtSecret).update(payloadStr).digest('hex');
     if (expectedHmac !== parts[1]) return false;
